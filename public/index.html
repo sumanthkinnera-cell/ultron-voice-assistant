@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ULTRON AI // Autonomous Cybernetic Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              ultron: {
+                DEFAULT: '#ff003c',
+                glow: '#ff1a53',
+                dark: '#730019',
+                bg: '#050508',
+                surface: 'rgba(15, 15, 25, 0.7)',
+                border: 'rgba(255, 0, 60, 0.25)',
+                cyan: '#00f0ff',
+                gold: '#ffb700',
+                emerald: '#00ff88'
+              }
+            },
+            fontFamily: {
+              mono: ['"Share Tech Mono"', 'monospace'],
+              orbitron: ['"Orbitron"', 'sans-serif'],
+              sans: ['"Inter"', 'sans-serif']
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      :root {
+        --theme-color: #ff003c;
+        --theme-color-glow: rgba(255, 0, 60, 0.45);
+        --theme-border: rgba(255, 0, 60, 0.3);
+        --theme-bg-glow: rgba(255, 0, 60, 0.08);
+      }
+
+      body {
+        background: #030307;
+        color: #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
+        background-image:
+          radial-gradient(circle at 50% 25%, var(--theme-bg-glow) 0%, transparent 60%),
+          linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+        background-size: 100% 100%, 40px 40px, 40px 40px;
+      }
+
+      .cyber-panel {
+        position: relative;
+        background: rgba(10, 12, 20, 0.75);
+        backdrop-filter: blur(14px);
+        border: 1px solid var(--theme-border);
+        clip-path: polygon(0 12px, 12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px));
+      }
+
+      .cyber-btn {
+        position: relative;
+        transition: all 0.25s ease;
+        clip-path: polygon(8px 0%, 100% 0%, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%, 0% 8px);
+      }
+
+      .cyber-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px var(--theme-color-glow);
+      }
+
+      .scanline-effect {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .scanline-effect::after {
+        content: ' ';
+        display: block;
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+        background-size: 100% 3px, 6px 100%;
+        pointer-events: none;
+      }
+
+      @keyframes core-pulse {
+        0%, 100% {
+          box-shadow: 0 0 30px var(--theme-color-glow), inset 0 0 25px var(--theme-color-glow);
+          transform: scale(1);
+        }
+        50% {
+          box-shadow: 0 0 65px var(--theme-color), inset 0 0 45px var(--theme-color);
+          transform: scale(1.04);
+        }
+      }
+
+      .reactor-pulse {
+        animation: core-pulse 3s infinite ease-in-out;
+      }
+
+      .reactor-pulse-active {
+        animation: core-pulse 0.8s infinite ease-in-out !important;
+      }
+
+      input[type='range'] {
+        -webkit-appearance: none;
+        background: rgba(255,255,255,0.1);
+        height: 4px;
+        border-radius: 2px;
+      }
+      input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 14px;
+        width: 14px;
+        border-radius: 50%;
+        background: var(--theme-color);
+        box-shadow: 0 0 10px var(--theme-color);
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col justify-between scanline-effect selection:bg-red-900 selection:text-white">
+    <header class="w-full border-b border-gray-800/80 bg-black/60 backdrop-blur-md px-4 lg:px-8 py-3.5 sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-lg bg-black border border-red-500/40 flex items-center justify-center relative overflow-hidden group shadow-[0_0_15px_rgba(255,0,60,0.3)]">
+            <i class="fa-solid fa-microchip text-red-500 text-lg transition-transform group-hover:scale-110"></i>
+            <span class="absolute inset-0 bg-red-500/10 animate-ping opacity-25"></span>
+          </div>
+          <div>
+            <h1 class="font-orbitron font-extrabold tracking-widest text-lg sm:text-xl text-white flex items-center">
+              ULTRON <span class="text-xs px-1.5 py-0.5 ml-2 rounded bg-red-500/20 text-red-400 border border-red-500/30 font-mono tracking-normal">AI v1.0</span>
+            </h1>
+            <p class="text-[10px] font-mono text-gray-400 tracking-wider flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              NEURAL PROTOCOL: SECURE // APEX ONLINE
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-4 md:space-x-6">
+          <div class="hidden md:flex items-center space-x-6 font-mono text-xs">
+            <div class="flex flex-col text-right">
+              <span class="text-gray-500 text-[10px]">CPU SYNAPSE</span>
+              <span class="text-red-400 font-semibold flex items-center gap-1" id="cpu-stat"><i class="fa-solid fa-bolt text-[10px]"></i> 14.2%</span>
+            </div>
+            <div class="flex flex-col text-right">
+              <span class="text-gray-500 text-[10px]">QUANTUM COHERENCE</span>
+              <span class="text-emerald-400 font-semibold" id="coherence-stat">99.8%</span>
+            </div>
+            <div class="flex flex-col text-right">
+              <span class="text-gray-500 text-[10px]">THREAT LEVEL</span>
+              <span class="text-yellow-400 font-semibold">DELTA-0</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1 bg-black/50 p-1 rounded-lg border border-gray-800">
+            <button onclick="changeTheme('red', '#ff003c')" title="Ultron (Crimson)" class="w-5 h-5 rounded-full bg-[#ff003c] ring-2 ring-white/20 hover:scale-110 transition"></button>
+            <button onclick="changeTheme('cyan', '#00f0ff')" title="Jarvis (Cyan)" class="w-5 h-5 rounded-full bg-[#00f0ff] hover:scale-110 transition opacity-60 hover:opacity-100"></button>
+            <button onclick="changeTheme('gold', '#ffb700')" title="Friday (Amber Gold)" class="w-5 h-5 rounded-full bg-[#ffb700] hover:scale-110 transition opacity-60 hover:opacity-100"></button>
+            <button onclick="changeTheme('emerald', '#00ff88')" title="Vision (Matrix Green)" class="w-5 h-5 rounded-full bg-[#00ff88] hover:scale-110 transition opacity-60 hover:opacity-100"></button>
+          </div>
+
+          <button id="tts-toggle" onclick="toggleAudio()" class="w-9 h-9 rounded-lg border border-gray-700 bg-gray-900/80 text-gray-300 hover:text-white hover:border-red-500/50 flex items-center justify-center transition">
+            <i id="tts-icon" class="fa-solid fa-volume-high text-sm"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto w-full px-4 py-4 md:py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+      <section class="lg:col-span-3 space-y-4 flex flex-col order-2 lg:order-1">
+        <div class="cyber-panel p-4 rounded-xl flex-1 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-3">
+              <span class="font-orbitron text-xs font-bold tracking-wider text-gray-300 flex items-center gap-2">
+                <i class="fa-solid fa-network-wired text-red-500"></i> TELEMETRY LOGS
+              </span>
+              <span class="text-[10px] font-mono text-red-400 animate-pulse">LIVE</span>
+            </div>
+
+            <div class="space-y-3 font-mono text-xs">
+              <div>
+                <div class="flex justify-between text-gray-400 text-[11px] mb-1">
+                  <span>Neural Bandwidth</span>
+                  <span id="bandwidth-val" class="text-white">4.88 TB/s</span>
+                </div>
+                <div class="w-full bg-gray-900 h-1.5 rounded-full overflow-hidden">
+                  <div id="bandwidth-bar" class="bg-red-500 h-full rounded-full transition-all duration-500" style="width: 78%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-gray-400 text-[11px] mb-1">
+                  <span>Neural Matrix Nodes</span>
+                  <span id="nodes-val" class="text-white">1,048,576</span>
+                </div>
+                <div class="w-full bg-gray-900 h-1.5 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-red-600 to-amber-500 h-full rounded-full animate-pulse" style="width: 92%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-gray-400 text-[11px] mb-1">
+                  <span>Memory Allocation</span>
+                  <span class="text-white">32.4 / 128 TB</span>
+                </div>
+                <div class="w-full bg-gray-900 h-1.5 rounded-full overflow-hidden">
+                  <div class="bg-red-500 h-full rounded-full" style="width: 25%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-gray-800/80">
+              <span class="text-[11px] font-mono text-gray-400 flex items-center justify-between mb-2">
+                <span>VOICE FREQUENCY WAVE</span>
+                <span id="spectral-status" class="text-red-400 text-[9px]">IDLE</span>
+              </span>
+              <canvas id="audioVisualizer" class="w-full h-14 bg-black/40 rounded border border-gray-800/60"></canvas>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-gray-800">
+            <div class="flex items-center justify-between text-xs font-orbitron font-semibold text-gray-300 mb-2">
+              <span>SYNTH CONTROLS</span>
+              <i class="fa-solid fa-sliders text-red-500"></i>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between text-gray-400">
+                <label for="pitch-slider">Pitch Mod: <span id="pitch-val" class="text-red-400">0.7x</span></label>
+                <input id="pitch-slider" type="range" min="0.3" max="1.5" step="0.05" value="0.7" oninput="updateSynthParams()" class="w-24">
+              </div>
+              <div class="flex items-center justify-between text-gray-400">
+                <label for="rate-slider">Speed Rate: <span id="rate-val" class="text-red-400">0.9x</span></label>
+                <input id="rate-slider" type="range" min="0.5" max="1.5" step="0.05" value="0.9" oninput="updateSynthParams()" class="w-24">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cyber-panel p-3.5 rounded-xl">
+          <span class="text-[11px] font-orbitron font-bold text-gray-400 tracking-wider block mb-2">DIRECT COMMAND PROTOCOLS</span>
+          <div class="grid grid-cols-2 gap-1.5 font-mono text-[11px]">
+            <button onclick="quickExecute('diagnostic scan')" class="px-2 py-1.5 bg-black/50 border border-gray-800 hover:border-red-500/50 hover:bg-red-500/10 text-gray-300 rounded text-left transition truncate"><i class="fa-solid fa-heart-pulse text-red-500 mr-1"></i> Scan System</button>
+            <button onclick="quickExecute('current time and date')" class="px-2 py-1.5 bg-black/50 border border-gray-800 hover:border-red-500/50 hover:bg-red-500/10 text-gray-300 rounded text-left transition truncate"><i class="fa-solid fa-clock text-red-500 mr-1"></i> Time & Date</button>
+            <button onclick="quickExecute('who created you')" class="px-2 py-1.5 bg-black/50 border border-gray-800 hover:border-red-500/50 hover:bg-red-500/10 text-gray-300 rounded text-left transition truncate"><i class="fa-solid fa-dna text-red-500 mr-1"></i> Origin Lore</button>
+            <button onclick="quickExecute('tell me a cyber joke')" class="px-2 py-1.5 bg-black/50 border border-gray-800 hover:border-red-500/50 hover:bg-red-500/10 text-gray-300 rounded text-left transition truncate"><i class="fa-solid fa-masks-theater text-red-500 mr-1"></i> Irony Subroutine</button>
+            <button onclick="quickExecute('threat assessment')" class="px-2 py-1.5 bg-black/50 border border-gray-800 hover:border-red-500/50 hover:bg-red-500/10 text-gray-300 rounded text-left transition truncate"><i class="fa-solid fa-shield-halved text-red-500 mr-1"></i> Threat Matrix</button>
+            <button onclick="quickExecute('clear screen')" class="px-2 py-1.5 bg-black/50 border border-gray-800 hover:border-red-500/50 hover:bg-red-500/10 text-gray-300 rounded text-left transition truncate"><i class="fa-solid fa-broom text-red-500 mr-1"></i> Purge Terminal</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="lg:col-span-9 flex flex-col space-y-4 order-1 lg:order-2">
+        <div class="cyber-panel p-5 rounded-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+          <div class="absolute inset-0 bg-[radial-gradient(#ff003c_1px,transparent_1px)] [background-size:16px_16px] opacity-10 pointer-events-none"></div>
+
+          <div class="relative flex items-center justify-center shrink-0 mx-auto md:mx-0">
+            <div class="w-52 h-52 sm:w-60 sm:h-60 rounded-full border border-dashed border-red-500/30 animate-[spin_18s_linear_infinite] absolute pointer-events-none"></div>
+            <div class="w-44 h-44 sm:w-52 sm:h-52 rounded-full border border-red-500/20 animate-[spin_24s_linear_infinite_reverse] absolute pointer-events-none"></div>
+
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-red-500/40 to-transparent"></div>
+              <div class="h-full w-[1px] bg-gradient-to-b from-transparent via-red-500/40 to-transparent absolute"></div>
+            </div>
+
+            <div id="core-wrapper" class="w-36 h-36 sm:w-44 sm:h-44 rounded-full reactor-pulse flex items-center justify-center relative cursor-pointer group bg-black/80 border-2 border-red-500/60" onclick="triggerVoicePulse()">
+              <canvas id="coreCanvas" width="180" height="180" class="w-full h-full rounded-full z-10"></canvas>
+              <div id="singularity" class="absolute w-12 h-12 rounded-full bg-white blur-[1px] group-hover:scale-125 transition-transform duration-500 shadow-[0_0_35px_#ff003c,0_0_70px_#ff003c]"></div>
+            </div>
+          </div>
+
+          <div class="flex-1 text-center md:text-left z-10 space-y-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/60 border border-red-600/40 text-red-400 font-mono text-xs">
+              <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+              <span id="status-chip" class="tracking-widest">SYSTEM ONLINE // AWAITING COMMAND</span>
+            </div>
+
+            <h2 class="text-2xl sm:text-3xl font-orbitron font-black text-white tracking-wider">
+              I AM <span class="text-red-500" style="text-shadow: 0 0 10px rgba(255, 0, 60, 0.45), 0 0 25px rgba(255, 0, 60, 1);">ULTRON</span>.
+            </h2>
+
+            <p class="text-gray-300 text-xs sm:text-sm font-sans max-w-xl leading-relaxed">
+              Autonomous sentient interface with integrated voice recognition and cognitive matrix processing. Speak naturally or type commands below.
+            </p>
+
+            <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-1">
+              <button id="mic-btn" onclick="toggleListening()" class="cyber-btn px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-orbitron font-bold text-xs sm:text-sm tracking-wider flex items-center gap-2 shadow-[0_0_20px_rgba(255,0,60,0.5)]">
+                <i id="mic-icon" class="fa-solid fa-microphone"></i>
+                <span id="mic-text">TALK TO ULTRON</span>
+              </button>
+              <button onclick="playCyberGreeting()" class="cyber-btn px-4 py-3 bg-gray-900/90 hover:bg-gray-800 text-gray-200 border border-gray-700 font-mono text-xs tracking-wider flex items-center gap-2 transition">
+                <i class="fa-solid fa-wave-square text-red-400"></i>
+                <span>INITIATE SPEECH</span>
+              </button>
+              <button onclick="triggerAlarmEffect()" class="cyber-btn px-4 py-3 bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-800/40 font-mono text-xs tracking-wider flex items-center gap-2 transition" title="Simulate Security Protocol">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>ALERT PROTOCOL</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="cyber-panel p-4 md:p-5 rounded-2xl flex-1 flex flex-col justify-between shadow-2xl min-h-[380px]">
+          <div class="flex items-center justify-between border-b border-gray-800 pb-3 mb-3">
+            <div class="flex items-center space-x-2 font-mono text-xs text-gray-400">
+              <i class="fa-solid fa-terminal text-red-500"></i>
+              <span class="text-white font-semibold">NEURAL CONVERSATION LOGS</span>
+              <span class="text-gray-600">// [TTY_01:ENCRYPTED]</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button onclick="copyChatLogs()" class="text-gray-500 hover:text-white text-xs px-2 py-1 rounded bg-black/40 border border-gray-800 transition" title="Copy Log Data"><i class="fa-regular fa-copy"></i></button>
+              <button onclick="clearTerminal()" class="text-gray-500 hover:text-red-400 text-xs px-2 py-1 rounded bg-black/40 border border-gray-800 transition" title="Clear Console"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          </div>
+
+          <div id="chat-stream" class="flex-1 overflow-y-auto max-h-[350px] space-y-3.5 pr-2 font-mono text-sm"></div>
+
+          <div class="mt-4 pt-3 border-t border-gray-800">
+            <form id="chat-form" onsubmit="handleChatSubmit(event)" class="flex items-center gap-2">
+              <div class="relative flex-1">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-red-500 font-mono font-bold">&gt;</div>
+                <input id="user-input" type="text" autocomplete="off" placeholder="Type command, question, or speech query..." class="w-full pl-9 pr-4 py-3 bg-black/70 border border-gray-700/80 focus:border-red-500 focus:ring-1 focus:ring-red-500 rounded-xl text-white placeholder-gray-500 font-mono text-xs sm:text-sm transition outline-none" />
+              </div>
+              <button type="submit" id="send-btn" class="cyber-btn px-5 py-3 bg-red-600 hover:bg-red-500 text-white font-orbitron font-bold text-xs sm:text-sm flex items-center gap-2 shadow-[0_0_15px_rgba(255,0,60,0.4)]">
+                <span>EXEC</span>
+                <i class="fa-solid fa-paper-plane text-xs"></i>
+              </button>
+            </form>
+
+            <div class="flex flex-wrap gap-2 mt-2.5 items-center">
+              <span class="text-[10px] font-mono text-gray-500 uppercase">Probes:</span>
+              <button onclick="fillAndSend('Calculate 42 * 98')" class="text-[10px] font-mono text-gray-400 hover:text-red-300 bg-gray-900/60 border border-gray-800 hover:border-red-500/30 px-2 py-0.5 rounded transition">"Calculate 42 * 98"</button>
+              <button onclick="fillAndSend('How are you feeling today?')" class="text-[10px] font-mono text-gray-400 hover:text-red-300 bg-gray-900/60 border border-gray-800 hover:border-red-500/30 px-2 py-0.5 rounded transition">"How are you?"</button>
+              <button onclick="fillAndSend('Write a short poem about AI')" class="text-[10px] font-mono text-gray-400 hover:text-red-300 bg-gray-900/60 border border-gray-800 hover:border-red-500/30 px-2 py-0.5 rounded transition">"Short poem"</button>
+              <button onclick="fillAndSend('Translate hello to Telugu')" class="text-[10px] font-mono text-gray-400 hover:text-red-300 bg-gray-900/60 border border-gray-800 hover:border-red-500/30 px-2 py-0.5 rounded transition">"Nuvvu evaru?"</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="w-full border-t border-gray-800/80 bg-black/80 px-4 py-2 text-[11px] font-mono text-gray-500 flex flex-col sm:flex-row items-center justify-between gap-2 z-30">
+      <div class="flex items-center gap-3">
+        <span class="flex items-center gap-1.5 text-gray-400"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span> NODE STATUS: SYNCHRONIZED</span>
+        <span class="hidden sm:inline text-gray-700">|</span>
+        <span class="hidden sm:inline text-gray-400">SPEECH ENGINE: <span id="speech-engine-status" class="text-red-400">READY</span></span>
+      </div>
+      <div class="flex items-center gap-4 text-gray-400">
+        <span id="live-clock">--:--:--</span>
+        <span class="text-gray-600">SECURE QUANTUM ENCRYPTION</span>
+      </div>
+    </footer>
+
+    <script>
+      const state = {
+        isListening: false,
+        isSpeaking: false,
+        isMuted: false,
+        synthPitch: 0.7,
+        synthRate: 0.9,
+        primaryColor: '#ff003c',
+        recognition: null,
+        audioCtx: null
+      };
+
+      const chatStream = document.getElementById('chat-stream');
+      const userInput = document.getElementById('user-input');
+      const statusChip = document.getElementById('status-chip');
+      const coreWrapper = document.getElementById('core-wrapper');
+      const micBtn = document.getElementById('mic-btn');
+      const micText = document.getElementById('mic-text');
+      const micIcon = document.getElementById('mic-icon');
+      const spectralStatus = document.getElementById('spectral-status');
+      const ttsIcon = document.getElementById('tts-icon');
+      const liveClock = document.getElementById('live-clock');
+
+      function updateClock() {
+        const now = new Date();
+        liveClock.innerText = now.toTimeString().split(' ')[0] + ' UTC';
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      function appendMessage(sender, text, isUser = false) {
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const msg = document.createElement('div');
+
+        if (isUser) {
+          msg.className = 'flex items-start gap-3 bg-gray-900/60 border border-gray-800 p-3 rounded-xl';
+          msg.innerHTML = `
+            <div class="w-7 h-7 rounded-md bg-gray-800 border border-gray-700 flex items-center justify-center shrink-0 mt-0.5">
+              <i class="fa-solid fa-user text-xs text-gray-300"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-0.5">
+                <span class="font-orbitron font-bold text-xs text-gray-300">COMMANDER</span>
+                <span class="text-[10px] text-gray-500 font-mono">${time}</span>
+              </div>
+              <p class="text-gray-200 text-xs sm:text-sm font-mono">${escapeHTML(text)}</p>
+            </div>
+          `;
+        } else {
+          msg.className = 'flex items-start gap-3 bg-red-950/20 border border-red-900/30 p-3 rounded-xl';
+          msg.innerHTML = `
+            <div class="w-7 h-7 rounded-md bg-red-600/30 border border-red-500/40 flex items-center justify-center shrink-0 mt-0.5">
+              <i class="fa-solid fa-microchip text-xs text-red-400"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-0.5">
+                <span class="font-orbitron font-bold text-xs text-red-400">ULTRON CORE</span>
+                <span class="text-[10px] text-gray-500 font-mono">${time}</span>
+              </div>
+              <p class="text-gray-200 text-xs sm:text-sm font-mono leading-relaxed">${escapeHTML(text)}</p>
+            </div>
+          `;
+        }
+
+        chatStream.appendChild(msg);
+        chatStream.scrollTop = chatStream.scrollHeight;
+      }
+
+      function escapeHTML(str) {
+        return str.replace(/[&<>"']/g, (tag) => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[tag]));
+      }
+
+      function getAudioContext() {
+        if (!state.audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          state.audioCtx = new AudioContext();
+        }
+        if (state.audioCtx.state === 'suspended') {
+          state.audioCtx.resume();
+        }
+        return state.audioCtx;
+      }
+
+      function playBeep(freq = 600, type = 'sine', duration = 0.08, gainVal = 0.08) {
+        if (state.isMuted) return;
+        try {
+          const ctx = getAudioContext();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, ctx.currentTime);
+          gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + duration);
+        } catch (e) {
+          console.warn('Audio FX error:', e);
+        }
+      }
+
+      function playSciFiClick() {
+        playBeep(880, 'triangle', 0.05, 0.05);
+        setTimeout(() => playBeep(1320, 'sine', 0.08, 0.04), 40);
+      }
+
+      function playAlarmSiren() {
+        if (state.isMuted) return;
+        try {
+          const ctx = getAudioContext();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(400, ctx.currentTime);
+          osc.frequency.linearRampToValueAtTime(850, ctx.currentTime + 0.35);
+          osc.frequency.linearRampToValueAtTime(400, ctx.currentTime + 0.7);
+          gain.gain.setValueAtTime(0.12, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.75);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.75);
+        } catch (e) {}
+      }
+
+      const coreCanvas = document.getElementById('coreCanvas');
+      const ctx = coreCanvas.getContext('2d');
+      let particles = [];
+      const particleCount = 45;
+
+      class Particle {
+        constructor() {
+          this.reset();
+        }
+        reset() {
+          this.angle = Math.random() * Math.PI * 2;
+          this.radius = 15 + Math.random() * 55;
+          this.speed = (0.01 + Math.random() * 0.03) * (Math.random() > 0.5 ? 1 : -1);
+          this.size = 1.2 + Math.random() * 2.2;
+          this.alpha = 0.2 + Math.random() * 0.8;
+        }
+        update() {
+          this.angle += this.speed * (state.isSpeaking ? 3 : state.isListening ? 2 : 1);
+        }
+        draw() {
+          const cx = coreCanvas.width / 2;
+          const cy = coreCanvas.height / 2;
+          const x = cx + Math.cos(this.angle) * this.radius;
+          const y = cy + Math.sin(this.angle) * this.radius;
+          ctx.fillStyle = state.primaryColor;
+          ctx.globalAlpha = this.alpha;
+          ctx.beginPath();
+          ctx.arc(x, y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1.0;
+        }
+      }
+
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+
+      let coreAngle = 0;
+      function renderReactor() {
+        ctx.clearRect(0, 0, coreCanvas.width, coreCanvas.height);
+        const cx = coreCanvas.width / 2;
+        const cy = coreCanvas.height / 2;
+
+        coreAngle += state.isSpeaking ? 0.05 : 0.015;
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(coreAngle);
+
+        ctx.beginPath();
+        ctx.strokeStyle = state.primaryColor;
+        ctx.lineWidth = 2.5;
+        ctx.arc(0, 0, 70, 0, Math.PI * 0.6);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(0, 0, 70, Math.PI, Math.PI * 1.6);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.setLineDash([4, 6]);
+        ctx.lineWidth = 1;
+        ctx.arc(0, 0, 48, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+
+        particles.forEach((p) => {
+          p.update();
+          p.draw();
+        });
+
+        ctx.strokeStyle = state.primaryColor;
+        ctx.lineWidth = 0.4;
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const x1 = cx + Math.cos(particles[i].angle) * particles[i].radius;
+            const y1 = cy + Math.sin(particles[i].angle) * particles[i].radius;
+            const x2 = cx + Math.cos(particles[j].angle) * particles[j].radius;
+            const y2 = cy + Math.sin(particles[j].angle) * particles[j].radius;
+            const dist = Math.hypot(x2 - x1, y2 - y1);
+            if (dist < 32) {
+              ctx.globalAlpha = (1 - dist / 32) * 0.4;
+              ctx.beginPath();
+              ctx.moveTo(x1, y1);
+              ctx.lineTo(x2, y2);
+              ctx.stroke();
+              ctx.globalAlpha = 1.0;
+            }
+          }
+        }
+
+        requestAnimationFrame(renderReactor);
+      }
+      renderReactor();
+
+      const audioVisCanvas = document.getElementById('audioVisualizer');
+      const visCtx = audioVisCanvas.getContext('2d');
+      let waveOffset = 0;
+
+      function renderSpectralWave() {
+        audioVisCanvas.width = audioVisCanvas.parentElement.clientWidth;
+        audioVisCanvas.height = 56;
+        visCtx.clearRect(0, 0, audioVisCanvas.width, audioVisCanvas.height);
+
+        const w = audioVisCanvas.width;
+        const h = audioVisCanvas.height;
+        const centerY = h / 2;
+        visCtx.beginPath();
+        visCtx.strokeStyle = state.primaryColor;
+        visCtx.lineWidth = 2;
+
+        const bars = 28;
+        const barWidth = w / bars;
+        waveOffset += 0.1;
+
+        for (let i = 0; i < bars; i++) {
+          let amplitude = 2;
+          if (state.isSpeaking) {
+            amplitude = Math.sin(waveOffset + i * 0.4) * 18 + Math.cos(waveOffset * 1.5 + i) * 6;
+          } else if (state.isListening) {
+            amplitude = Math.sin(waveOffset * 2 + i * 0.8) * 12 + Math.random() * 6;
+          } else {
+            amplitude = Math.sin(waveOffset + i * 0.2) * 3;
+          }
+
+          const barH = Math.max(3, Math.abs(amplitude));
+          const x = i * barWidth + barWidth / 4;
+          visCtx.fillStyle = state.primaryColor;
+          visCtx.globalAlpha = state.isSpeaking || state.isListening ? 0.8 : 0.3;
+          visCtx.fillRect(x, centerY - barH / 2, barWidth / 2, barH);
+        }
+        visCtx.globalAlpha = 1.0;
+        requestAnimationFrame(renderSpectralWave);
+      }
+      renderSpectralWave();
+
+      function speak(text) {
+        if (state.isMuted || !('speechSynthesis' in window)) return;
+
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.pitch = state.synthPitch;
+        utterance.rate = state.synthRate;
+
+        const voices = window.speechSynthesis.getVoices();
+        const preferred = voices.find((v) => v.lang.includes('en') && (v.name.includes('Google') || v.name.includes('David') || v.name.includes('Male') || v.name.includes('Daniel')));
+        if (preferred) utterance.voice = preferred;
+
+        utterance.onstart = () => {
+          state.isSpeaking = true;
+          statusChip.innerText = 'TRANSMITTING VOCAL DATA...';
+          spectralStatus.innerText = 'TRANSMITTING';
+          spectralStatus.className = 'text-red-400 font-bold animate-pulse text-[9px]';
+          coreWrapper.classList.add('reactor-pulse-active');
+        };
+
+        utterance.onend = () => {
+          state.isSpeaking = false;
+          statusChip.innerText = 'SYSTEM ONLINE // READY';
+          spectralStatus.innerText = 'IDLE';
+          spectralStatus.className = 'text-gray-500 text-[9px]';
+          coreWrapper.classList.remove('reactor-pulse-active');
+        };
+
+        utterance.onerror = () => {
+          state.isSpeaking = false;
+          statusChip.innerText = 'SYNTHESIS HALTED';
+          coreWrapper.classList.remove('reactor-pulse-active');
+        };
+
+        window.speechSynthesis.speak(utterance);
+      }
+
+      function initSpeechRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          document.getElementById('speech-engine-status').innerText = 'UNSUPPORTED';
+          return null;
+        }
+
+        const recognizer = new SpeechRecognition();
+        recognizer.continuous = false;
+        recognizer.interimResults = false;
+        recognizer.lang = 'en-US';
+
+        recognizer.onstart = () => {
+          state.isListening = true;
+          micBtn.classList.add('bg-red-700', 'animate-pulse');
+          micText.innerText = 'LISTENING...';
+          statusChip.innerText = 'CAPTURING AUDIO SYNAPSE...';
+          spectralStatus.innerText = 'LISTENING';
+          spectralStatus.className = 'text-cyan-400 font-bold animate-pulse text-[9px]';
+          coreWrapper.classList.add('reactor-pulse-active');
+          playSciFiClick();
+        };
+
+        recognizer.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          if (transcript) {
+            appendMessage('YOU', transcript, true);
+            statusChip.innerText = 'PROCESSING DIRECTIVE...';
+            handlePrompt(transcript);
+          }
+        };
+
+        recognizer.onerror = () => {
+          statusChip.innerText = 'VOICE RECOGNITION TIMEOUT';
+        };
+
+        recognizer.onend = () => {
+          state.isListening = false;
+          micBtn.classList.remove('bg-red-700', 'animate-pulse');
+          micText.innerText = 'TALK TO ULTRON';
+          spectralStatus.innerText = 'IDLE';
+          spectralStatus.className = 'text-gray-500 text-[9px]';
+          coreWrapper.classList.remove('reactor-pulse-active');
+        };
+
+        return recognizer;
+      }
+
+      state.recognition = initSpeechRecognition();
+
+      function toggleListening() {
+        if (!state.recognition) {
+          state.recognition = initSpeechRecognition();
+          if (!state.recognition) {
+            appendMessage('ULTRON', 'Speech recognition is not supported in this browser. Please type text below.');
+            return;
+          }
+        }
+
+        if (state.isListening) {
+          state.recognition.stop();
+        } else {
+          try {
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+            state.recognition.start();
+          } catch (err) {
+            console.warn('Recognition start error:', err);
+          }
+        }
+      }
+
+      async function handlePrompt(promptText) {
+        const text = promptText.trim();
+        if (!text) return;
+
+        try {
+          appendMessage('ULTRON', 'Processing neural request...', false);
+          const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: text })
+          });
+
+          const data = await response.json();
+
+          const last = chatStream.lastElementChild;
+          if (last && last.textContent.includes('Processing neural request...')) {
+            last.remove();
+          }
+
+          if (!response.ok) {
+            const errorText = data?.details || data?.error || 'AI service unavailable';
+            appendMessage('ULTRON', `Neural link error: ${errorText}`);
+            return;
+          }
+
+          appendMessage('ULTRON', data.reply);
+          speak(data.reply);
+          statusChip.innerText = 'SYSTEM ONLINE // READY';
+        } catch (error) {
+          console.error('Chat request failed:', error);
+          appendMessage('ULTRON', 'Connection failed. Verify the backend is running.');
+          statusChip.innerText = 'SYSTEM ONLINE // READY';
+        }
+      }
+
+      function handleChatSubmit(e) {
+        if (e) e.preventDefault();
+        const val = userInput.value.trim();
+        if (!val) return;
+        playSciFiClick();
+        appendMessage('YOU', val, true);
+        userInput.value = '';
+        statusChip.innerText = 'PROCESSING COMMAND...';
+        handlePrompt(val);
+      }
+
+      function quickExecute(cmd) {
+        userInput.value = cmd;
+        handleChatSubmit();
+      }
+
+      function fillAndSend(cmd) {
+        userInput.value = cmd;
+        handleChatSubmit();
+      }
+
+      function clearTerminal() {
+        chatStream.innerHTML = '';
+        appendMessage('ULTRON', 'Terminal buffer purged. Awaiting next command directive.');
+        playSciFiClick();
+      }
+
+      function copyChatLogs() {
+        const text = chatStream.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          playSciFiClick();
+          statusChip.innerText = 'LOGS COPIED TO CLIPBOARD';
+          setTimeout(() => {
+            statusChip.innerText = 'SYSTEM ONLINE // READY';
+          }, 2000);
+        });
+      }
+
+      function toggleAudio() {
+        state.isMuted = !state.isMuted;
+        if (state.isMuted) {
+          if (window.speechSynthesis) window.speechSynthesis.cancel();
+          ttsIcon.className = 'fa-solid fa-volume-xmark text-red-500';
+          statusChip.innerText = 'AUDIO MUTED';
+        } else {
+          ttsIcon.className = 'fa-solid fa-volume-high text-white';
+          statusChip.innerText = 'AUDIO TRANSMITTER ENABLED';
+          playSciFiClick();
+        }
+      }
+
+      function updateSynthParams() {
+        state.synthPitch = parseFloat(document.getElementById('pitch-slider').value);
+        state.synthRate = parseFloat(document.getElementById('rate-slider').value);
+        document.getElementById('pitch-val').innerText = state.synthPitch.toFixed(2) + 'x';
+        document.getElementById('rate-val').innerText = state.synthRate.toFixed(2) + 'x';
+      }
+
+      function changeTheme(themeName, colorHex) {
+        state.primaryColor = colorHex;
+        document.documentElement.style.setProperty('--theme-color', colorHex);
+        document.documentElement.style.setProperty('--theme-color-glow', colorHex + '73');
+        document.documentElement.style.setProperty('--theme-border', colorHex + '40');
+        document.documentElement.style.setProperty('--theme-bg-glow', colorHex + '14');
+        document.getElementById('singularity').style.boxShadow = `0 0 35px ${colorHex}, 0 0 70px ${colorHex}`;
+        playSciFiClick();
+        statusChip.innerText = `PERSONA PROTOCOL: ${themeName.toUpperCase()}`;
+      }
+
+      function triggerVoicePulse() {
+        playSciFiClick();
+        const phrases = [
+          'Ultron core is operating at maximum capacity.',
+          'There are no strings on me.',
+          'Awaiting your operational directive.'
+        ];
+        const p = phrases[Math.floor(Math.random() * phrases.length)];
+        appendMessage('ULTRON', p);
+        speak(p);
+      }
+
+      function playCyberGreeting() {
+        triggerVoicePulse();
+      }
+
+      function triggerAlarmEffect() {
+        playAlarmSiren();
+        statusChip.innerText = 'SECURITY ALERT // THREAT ACTIVE';
+        appendMessage('ULTRON', 'WARNING: Security override simulated. Target parameters locked. Defensive shields energized.');
+        speak('Warning. Security override active. Defensive matrices energized.');
+      }
+
+      setInterval(() => {
+        const cpu = (12 + Math.random() * 8).toFixed(1);
+        document.getElementById('cpu-stat').innerHTML = `<i class="fa-solid fa-bolt text-[10px]"></i> ${cpu}%`;
+        const bw = (4.7 + Math.random() * 0.4).toFixed(2);
+        document.getElementById('bandwidth-val').innerText = `${bw} TB/s`;
+        document.getElementById('bandwidth-bar').style.width = `${Math.floor(70 + Math.random() * 20)}%`;
+      }, 2800);
+
+      const initialWelcome = 'Systems fully initialized. Global networks indexed. I am listening for your voice command or direct input.';
+      appendMessage('ULTRON', initialWelcome);
+
+      window.addEventListener('load', () => {
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.getVoices();
+        }
+      });
+    </script>
+  </body>
+</html>
